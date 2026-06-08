@@ -7,13 +7,11 @@ import java.util.Scanner;
 public class Terminal {
     private final Navegador navegador;
     private final OperadorDeDisco operador;
-    private final String userHome;
     private final String userName;
 
     public Terminal(Navegador navegador, OperadorDeDisco operador) {
         this.navegador = navegador;
         this.operador = operador;
-        this.userHome = System.getProperty("user.home");
         this.userName = System.getProperty("user.name");
     }
 
@@ -21,26 +19,31 @@ public class Terminal {
         Scanner scanner = new Scanner(System.in);
         boolean rodando = true;
 
-        System.out.print("\033[H\033[2J"); //Aqui ele vai dar um clear quando iniciar 
+        System.out.print("\033[H\033[2J"); // Aqui ele vai dar um clear quando iniciar 
         System.out.flush();
 
         while (rodando) {
-            String caminhoAtual = navegador.getDiretorioAtual().getAbsolutePath();
-            if (caminhoAtual.startsWith(userHome)) {
-                caminhoAtual = caminhoAtual.replaceFirst(userHome, "~");
-            } //Se estiver na pasta home ele vai mostrar ~ ao invés do caminho completo 
+            String caminhoAbsoluto = navegador.getDiretorioAtual().getAbsolutePath();
+            String raizAbsoluta = navegador.getRaizDoSistema().getAbsolutePath();
 
-            System.out.print("\033[1;32m" + userName + "@file-explorer\033[0m:\033[1;34m" + caminhoAtual + "\033[0m$ "); //Aqui ele vai mostrar o usuário e o caminho atual coloridos
+            // Aqui ele vai simular a raiz do sistema, mostrando apenas o caminho relativo a partir da raiz
+            String caminhoSimulado = caminhoAbsoluto.replace(raizAbsoluta, "");
+            if (caminhoSimulado.isEmpty()) {
+                caminhoSimulado = "/"; 
+            }
+
+            // Aqui ele vai mostrar o usuário e o caminho atual coloridos simulando a raiz
+            System.out.print("\033[1;32m" + userName + "@file-explorer\033[0m:\033[1;34m" + caminhoSimulado + "\033[0m$ ");
             
             String entrada = scanner.nextLine().trim();
 
-            if (entrada.isEmpty()) continue; //Caso aperte enter sem digitar nada, ele vai apenas mostrar o terminal novamente
+            if (entrada.isEmpty()) continue; // Caso aperte enter sem digitar nada, ele vai apenas mostrar o terminal novamente
 
             String[] partes = entrada.split(" ", 2);
-            String comando = partes[0].toLowerCase();   //Aqui ele separar o que o usuário digitar em duas partes, a primara parte é o comando e a segunda o argumento (se existir)
+            String comando = partes[0].toLowerCase();   // Aqui ele separar o que o usuário digitar em duas partes
             String argumento = partes.length > 1 ? partes[1] : "";
 
-            switch (comando) { //Pega o comando e executa a ação correspondente
+            switch (comando) { // Pega o comando e executa a ação correspondente
                 case "exit":
                     rodando = false;
                     break;
@@ -57,7 +60,9 @@ public class Terminal {
                     } else if (!argumento.isEmpty()) {
                         navegador.entrarNoDiretorio(argumento);
                     } else {
-                        navegador.entrarNoDiretorio(userHome);
+                        while (!navegador.getDiretorioAtual().equals(navegador.getRaizDoSistema())) {
+                            navegador.voltarDiretorio();
+                        }
                     }
                     break;
                 case "touch":
