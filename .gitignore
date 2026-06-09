@@ -5,3 +5,5 @@
 bin/
 out/
 root/
+.DS_Store
+Thumbs.db
