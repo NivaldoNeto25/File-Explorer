@@ -49,4 +49,20 @@ public class Navegador {
             }
         }
     }
+
+    public void voltarDiretorio(){
+        try{
+            String caminhoAtual = diretorioAtual.getCanonicalPath(); //vai pegar o caminho verdadeiro deles
+            String caminhoRaiz = raizDoSistema.getCanonicalPath();
+
+            if (caminhoAtual.equals(caminhoRaiz)){
+                System.out.println("cd: já está na raiz do sistema"); //para não escapar do projeto
+                return;
+            }
+        } catch(Exception e){
+            System.out.println("cd: erro ao verificar caminho"); //"tratamento" de erro nos caminhos
+            return;
+        }
+        diretorioAtual = diretorioAtual.getParentFile(); //caso de tudo certo, ele vai pro "pai/mae" dele, ou seja, o diretorio anterior
+    }
 }
