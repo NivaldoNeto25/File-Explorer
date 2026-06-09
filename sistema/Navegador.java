@@ -65,4 +65,33 @@ public class Navegador {
         }
         diretorioAtual = diretorioAtual.getParentFile(); //caso de tudo certo, ele vai pro "pai/mae" dele, ou seja, o diretorio anterior
     }
+
+    public void entrarNoDiretorio(String nome){
+        File destino = new File(diretorioAtual, nome);
+
+        try{
+            destino = destino.getCanonicalFile();
+
+            String caminhoDestino = destino.getCanonicalPath();
+            String caminhoRaiz = raizDoSistema.getCanonicalPath();
+
+            if(!destino.exists()){ //caso n ache com esse nome
+                System.out.println("Arquivo ou diretório não encontrado");
+                return;
+            }
+            if(!destino.isDirectory()){ //caso n seja um diretório
+                System.out.println(nome + "não é um diretório");
+                return;
+            }
+            if(!caminhoDestino.startsWith(caminhoRaiz)){ //caso fuja do sistema
+                System.out.println("Acesso negado fora da raiz do programa");
+                return;
+            }
+        } catch(Exception e){ //tratar erro
+            System.out.println("Erro no caminho");
+            return;
+        }
+
+        diretorioAtual = destino; //se der tudo certo vai pro diretório desejado
+    }
 }
