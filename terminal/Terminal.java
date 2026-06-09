@@ -1,15 +1,15 @@
 package terminal;
 
 import sistema.Navegador;
-import sistema.OperadorDeDisco;
+import sistema.Operador;
 import java.util.Scanner;
 
 public class Terminal {
     private final Navegador navegador;
-    private final OperadorDeDisco operador;
+    private final Operador operador;
     private final String userName;
 
-    public Terminal(Navegador navegador, OperadorDeDisco operador) {
+    public Terminal(Navegador navegador, Operador operador) {
         this.navegador = navegador;
         this.operador = operador;
         this.userName = System.getProperty("user.name");
