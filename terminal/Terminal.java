@@ -85,6 +85,19 @@ public class Terminal {
                     if (argumento.isEmpty()) System.out.println("nano: falta operando");
                     else operador.editarArquivo(navegador.getDiretorioAtual(), argumento, scanner);
                     break;
+                case "copy":
+                    if (argumento.isEmpty()) {
+                        System.out.println("copy: falta operando de arquivo");
+                    } else {
+                        String[] argsCopy = argumento.split(" ", 2);
+
+                        if (argsCopy.length < 2) {
+                            System.out.println("copy: falta operando de destino");
+                        } else {
+                            operador.copiarArquivo(navegador.getDiretorioAtual(), argsCopy[0], argsCopy[1]);
+                        }
+                    }
+                    break;
                 default:
                     System.out.println(comando + ": comando não encontrado");
             }
