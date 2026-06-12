@@ -5,6 +5,10 @@ import java.io.FileWriter; // Usado para escrever texto dentro de um arquivo
 import java.io.PrintWriter; // Facilita a escrita, permitindo usar o .println() igual no System.out
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class Operador {
 
@@ -38,9 +42,6 @@ public class Operador {
             System.out.println("rm: não foi possível remover '" + nome + "': Arquivo ou diretório inexistente");
             return;
         }
-        
-        // IMPORTANTE: No Java, o .delete() apaga arquivos tranquilamente, mas SÓ apaga pastas se elas estiverem VAZIAS.
-        // Isso imita perfeitamente o comportamento seguro do 'rmdir' ou do 'rm' sem o '-r'.
         if (!alvo.delete()) {
             System.out.println("rm: não foi possível remover '" + nome + "': É um diretório com arquivos dentro ou você não tem permissão");
         }
@@ -50,7 +51,7 @@ public class Operador {
     public void lerArquivo(File diretorioAtual, String nomeDoArquivo) {
         File arquivo = new File(diretorioAtual, nomeDoArquivo);
 
-        // Validações básicas antes de tentar ler
+        // Validações antes de tentar ler
         if (!arquivo.exists()) {
             System.out.println("cat: " + nomeDoArquivo + ": Arquivo inexistente");
             return;
@@ -59,9 +60,6 @@ public class Operador {
             System.out.println("cat: " + nomeDoArquivo + ": É um diretório"); // Não se pode dar 'cat' em uma pasta
             return;
         }
-
-        // Usamos o "Try-with-resources" (esse try com parênteses).
-        // Isso garante que o Scanner(arquivo) vai ser fechado automaticamente no final, mesmo se der erro, liberando a memória RAM.
         try (Scanner leitorDeArquivo = new Scanner(arquivo)) {
             while (leitorDeArquivo.hasNextLine()) {
                 System.out.println(leitorDeArquivo.nextLine());
@@ -80,7 +78,7 @@ public class Operador {
             return;
         }
 
-        // Limpa a tela para dar a imersão de que abrimos um editor de texto
+        // Limpa a tela
         System.out.print("\033[H\033[2J");
         System.out.flush();
         System.out.println(" === Arquivo: " + nomeDoArquivo + " | Digite ':wq' em uma nova linha para salvar e sair === ");
@@ -116,5 +114,37 @@ public class Operador {
         // Quando sair do loop do nano, limpa a tela de novo para devolver o usuário ao terminal limpo
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    public void copiarArquivo(File diretorioAtual, String nomeOrigem, String nomeDestino) {
+        File arquivoOrigem = new File(diretorioAtual, nomeOrigem);
+        File arquivoDestino = new File(diretorioAtual, nomeDestino);
+
+        // Verifica o estado no sistema de arquivos. Se não existir ou for diretório, aborta a operação.
+        if (!arquivoOrigem.exists() || arquivoOrigem.isDirectory()) {
+            System.out.println("copy: não foi possível copiar '" + nomeOrigem + "': Arquivo inexistente ou é diretório");
+            return;
+        }
+
+        // Abre os fluxos de I/O (Input/Output). O uso do try com parênteses garante que o método .close()
+        // seja chamado automaticamente no final, liberando o lock do arquivo no Sistema Operacional.
+        try (DataInputStream leitor = new DataInputStream(new FileInputStream(arquivoOrigem));
+             DataOutputStream escritor = new DataOutputStream(new FileOutputStream(arquivoDestino))) {
+            
+            // Cria um array capaz de armazenar 1024 bytes (1 KB) por ciclo.
+            byte[] buffer = new byte[1024]; 
+            int bytesLidos;
+
+            // O leitor.read() acessa o disco, puxa até 1024 bytes e joga no array (buffer).
+            // Ele retorna o número inteiro de bytes que realmente leu. Quando atinge o EOF (End Of File), retorna -1.
+            while ((bytesLidos = leitor.read(buffer)) != -1) {
+                // O escritor.write() pega o array na RAM e grava no disco de destino.
+                // Começa do índice 0 e vai até a quantidade exata de bytesLidos para não gravar lixo de memória na última volta.
+                escritor.write(buffer, 0, bytesLidos);
+            }
+            
+        } catch (IOException e) {
+            System.out.println("copy: erro de I/O ao tentar copiar o arquivo");
+        }
     }
 }
