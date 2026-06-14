@@ -98,29 +98,6 @@ public class Terminal {
                         }
                     }
                     break;
-                case "write":
-                    if(argumento.isEmpty()){
-                        System.out.println("write: falta operando.");
-                    } else{
-                        String[] argsWrite = argumento.split(" ", 2);
-                        if(argsWrite.length < 2){
-                            System.out.println("write: uso correto: 'write <arquivo> <conteúdo>");
-                        } else{
-                            operador.escreverArquivo(navegador.getDiretorioAtual(), argsWrite[0], argsWrite[1], true, navegador.getRaizDoSistema());
-                        }
-                    }
-                    break;
-                case "append":
-                    if(argumento.isEmpty()){
-                        System.out.println("append: falta operando");
-                    } else{
-                        String[] argsAppend = argumento.split(" ", 2);
-                        if (argsAppend.length < 2){ 
-                            System.out.println("append: uso correto: 'append <arquivo> <conteúdo>'");
-                        } else{
-                            operador.escreverArquivo(navegador.getDiretorioAtual(), argsAppend[0], argsAppend[1], false, navegador.getRaizDoSistema());
-                        }
-                    }
                 default:
                     System.out.println(comando + ": comando não encontrado");
             }
