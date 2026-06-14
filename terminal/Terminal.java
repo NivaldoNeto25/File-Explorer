@@ -67,23 +67,23 @@ public class Terminal {
                     break;
                 case "touch":
                     if (argumento.isEmpty()) System.out.println("touch: falta operando");
-                    else operador.criarArquivo(navegador.getDiretorioAtual(), argumento);
+                    else operador.criarArquivo(navegador.getDiretorioAtual(), argumento, navegador.getRaizDoSistema());
                     break;
                 case "mkdir":
                     if (argumento.isEmpty()) System.out.println("mkdir: falta operando");
-                    else operador.criarPasta(navegador.getDiretorioAtual(), argumento);
+                    else operador.criarPasta(navegador.getDiretorioAtual(), argumento, navegador.getRaizDoSistema());
                     break;
                 case "rm":
                     if (argumento.isEmpty()) System.out.println("rm: falta operando");
-                    else operador.deletar(navegador.getDiretorioAtual(), argumento);
+                    else operador.deletar(navegador.getDiretorioAtual(), argumento, navegador.getRaizDoSistema());
                     break;
                 case "cat":
                     if (argumento.isEmpty()) System.out.println("cat: falta operando");
-                    else operador.lerArquivo(navegador.getDiretorioAtual(), argumento);
+                    else operador.lerArquivo(navegador.getDiretorioAtual(), argumento, navegador.getRaizDoSistema());
                     break;
                 case "nano":
                     if (argumento.isEmpty()) System.out.println("nano: falta operando");
-                    else operador.editarArquivo(navegador.getDiretorioAtual(), argumento, scanner);
+                    else operador.editarArquivo(navegador.getDiretorioAtual(), argumento, scanner, navegador.getRaizDoSistema());
                     break;
                 case "copy":
                     if (argumento.isEmpty()) {
@@ -94,7 +94,7 @@ public class Terminal {
                         if (argsCopy.length < 2) {
                             System.out.println("copy: falta operando de destino");
                         } else {
-                            operador.copiarArquivo(navegador.getDiretorioAtual(), argsCopy[0], argsCopy[1]);
+                            operador.copiarArquivo(navegador.getDiretorioAtual(), argsCopy[0], argsCopy[1], navegador.getRaizDoSistema());
                         }
                     }
                     break;
