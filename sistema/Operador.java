@@ -200,4 +200,23 @@ public class Operador {
             System.out.println("copy: erro de I/O ao tentar copiar o arquivo");
         }
     }
+    
+    public void escreverArquivo(File diretorioAtual, String nomeDoArquivo, String conteudo, boolean sobrescrever, File raizDoSistema){
+        File arquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "write");
+        if(arquivo == null){
+            return;
+        }
+
+        if(arquivo.isDirectory()){
+            System.out.println("write: " + nomeDoArquivo + ": é um diretório.");
+            return;
+        }
+
+        try(BufferedOutputStream escritor = new BufferedOutputStream(new FileOutputStream(arquivo, !sobrescrever))){
+            escritor.write(conteudo.getBytes());
+            escritor.flush();
+        } catch(IOException e){
+            System.out.println("write: erro ao tentar escrever no arquivo.");
+        }
+    }
 }
