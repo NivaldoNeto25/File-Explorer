@@ -29,7 +29,7 @@ public class Operador {
     }
 
     // Simula o comando 'touch'
-    public void criarArquivo(File diretorioAtual, String nomeDoArquivo) {
+    public void criarArquivo(File diretorioAtual, String nomeDoArquivo, File raizDoSistema) {
         File novoArquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "touch");
         if (novoArquivo == null){
             return;
@@ -45,7 +45,7 @@ public class Operador {
     }
 
     // Simula o comando 'mkdir'
-    public void criarPasta(File diretorioAtual, String nomeDaPasta) {
+    public void criarPasta(File diretorioAtual, String nomeDaPasta, File raizDoSistema) {
         File novaPasta = validarCaminho(diretorioAtual, nomeDaPasta, raizDoSistema, "mkdir");
         if (novaPasta == null){
             return;
@@ -58,7 +58,7 @@ public class Operador {
     }
 
     // Simula o comando 'rm'
-    public void deletar(File diretorioAtual, String nome) {
+    public void deletar(File diretorioAtual, String nome, File raizDoSistema) {
         File alvo = validarCaminho(diretorioAtual, nome, raizDoSistema, "rm");
         if (alvo == null){
             return;
@@ -88,7 +88,7 @@ public class Operador {
     }
 
     // Simula o comando 'cat'
-    public void lerArquivo(File diretorioAtual, String nomeDoArquivo) {
+    public void lerArquivo(File diretorioAtual, String nomeDoArquivo, File raizDoSistema) {
         File arquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "cat");
         if(arquivo == null){
             return;
@@ -113,7 +113,7 @@ public class Operador {
     }
 
     // Simula o editor 'nano'
-    public void editarArquivo(File diretorioAtual, String nomeDoArquivo, Scanner leitorDoTerminal) {
+    public void editarArquivo(File diretorioAtual, String nomeDoArquivo, Scanner leitorDoTerminal, File raizDoSistema) {
         File arquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "nano");
         if(arquivo == null){
             return;
@@ -162,7 +162,7 @@ public class Operador {
         System.out.flush();
     }
 
-    public void copiarArquivo(File diretorioAtual, String nomeOrigem, String nomeDestino) {
+    public void copiarArquivo(File diretorioAtual, String nomeOrigem, String nomeDestino, File raizDoSistema) {
         File arquivoOrigem = validarCaminho(diretorioAtual, nomeOrigem, raizDoSistema, "copy");
         if(arquivoOrigem == null){
             return;
