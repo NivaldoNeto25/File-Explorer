@@ -7,10 +7,26 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;// escolhemos o buffered para ser mais eficiente
 
 public class Operador {
+
+    private File validarCaminho(File diretorioAtual, String nome, File raizDoSistema, String comando){
+        File alvo = new File(diretorioAtual, nome);
+        try{
+            String caminhoAlvo = alvo.getCanonicalPath();
+            String caminhoRaiz = raizDoSistema.getCanonicalPath();
+            if(!caminhoAlvo.startsWith(caminhoRaiz)){
+                System.out.println(comando + ": acesso negado.");
+                return null;
+            }
+        } catch(IOException e){
+            System.err.println(comando + ": erro ao resolver caminho.");
+            return null;
+        }
+        return alvo;
+    }
 
     // Simula o comando 'touch'
     public void criarArquivo(File diretorioAtual, String nomeDoArquivo) {
@@ -43,7 +59,7 @@ public class Operador {
             return;
         }
         if (!alvo.delete()) {
-            System.out.println("rm: não foi possível remover '" + nome + "': É um diretório com arquivos dentro ou você não tem permissão");
+            System.out.println("rm: não foi possível remover '" + nome + "': erro ao deletar.");
         }
     }
 
