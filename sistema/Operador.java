@@ -181,8 +181,7 @@ public class Operador {
 
         // Abre os fluxos de I/O (Input/Output). O uso do try com parênteses garante que o método .close()
         // seja chamado automaticamente no final, liberando o lock do arquivo no Sistema Operacional.
-        try (DataInputStream leitor = new DataInputStream(new FileInputStream(arquivoOrigem));
-             DataOutputStream escritor = new DataOutputStream(new FileOutputStream(arquivoDestino))) {
+        try (BufferedInputStream leitor = new BufferedInputStream(new FileInputStream(arquivoOrigem)); BufferedOutputStream escritor = new BufferedOutputStream(new FileOutputStream(arquivoDestino))) {
             
             // Cria um array capaz de armazenar 1024 bytes (1 KB) por ciclo.
             byte[] buffer = new byte[1024]; 
@@ -195,6 +194,7 @@ public class Operador {
                 // Começa do índice 0 e vai até a quantidade exata de bytesLidos para não gravar lixo de memória na última volta.
                 escritor.write(buffer, 0, bytesLidos);
             }
+            escritor.flush();
             
         } catch (IOException e) {
             System.out.println("copy: erro de I/O ao tentar copiar o arquivo");
