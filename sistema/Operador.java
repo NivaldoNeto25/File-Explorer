@@ -17,7 +17,7 @@ public class Operador {
         try{
             String caminhoAlvo = alvo.getCanonicalPath();
             String caminhoRaiz = raizDoSistema.getCanonicalPath();
-            if(!caminhoAlvo.startsWith(caminhoRaiz)){
+            if(!caminhoAlvo.startsWith(caminhoRaiz)){ //se o diretório estiver fora do "root" do sistema n vai liberar
                 System.out.println(comando + ": acesso negado.");
                 return null;
             }
@@ -30,7 +30,11 @@ public class Operador {
 
     // Simula o comando 'touch'
     public void criarArquivo(File diretorioAtual, String nomeDoArquivo) {
-        File novoArquivo = new File(diretorioAtual, nomeDoArquivo);
+        File novoArquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "touch");
+        if (novoArquivo == null){
+            return;
+        }
+
         try {
             // O createNewFile retorna true se o arquivo não existia e foi criado
             // Se já existia, ele retorna false e não faz nada
@@ -42,7 +46,10 @@ public class Operador {
 
     // Simula o comando 'mkdir'
     public void criarPasta(File diretorioAtual, String nomeDaPasta) {
-        File novaPasta = new File(diretorioAtual, nomeDaPasta);
+        File novaPasta = validarCaminho(diretorioAtual, nomeDaPasta, raizDoSistema, "mkdir");
+        if (novaPasta == null){
+            return;
+        }
         
         // O método mkdir() já tenta criar e retorna um booleano do resultado.
         if (!novaPasta.mkdir()) {
@@ -52,20 +59,40 @@ public class Operador {
 
     // Simula o comando 'rm'
     public void deletar(File diretorioAtual, String nome) {
-        File alvo = new File(diretorioAtual, nome);
+        File alvo = validarCaminho(diretorioAtual, nome, raizDoSistema, "rm");
+        if (alvo == null){
+            return;
+        }
         
         if (!alvo.exists()) {
             System.out.println("rm: não foi possível remover '" + nome + "': Arquivo ou diretório inexistente");
             return;
         }
-        if (!alvo.delete()) {
+        if (!deletarRecursivo(alvo)) {
             System.out.println("rm: não foi possível remover '" + nome + "': erro ao deletar.");
         }
     }
 
+    private boolean deletarRecursivo(File alvo){ //aq ele vai conseguir "limpar" o diretorio c arquivos para poder apagar ele
+        if(alvo.isDirectory()){
+            File[] filhos = alvo.listFiles();
+            if(filhos != null){
+                for (File filho : filhos){
+                    if(!deletarRecursivo(filho)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return alvo.delete();
+    }
+
     // Simula o comando 'cat'
     public void lerArquivo(File diretorioAtual, String nomeDoArquivo) {
-        File arquivo = new File(diretorioAtual, nomeDoArquivo);
+        File arquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "cat");
+        if(arquivo == null){
+            return;
+        }
 
         // Validações antes de tentar ler
         if (!arquivo.exists()) {
@@ -87,7 +114,10 @@ public class Operador {
 
     // Simula o editor 'nano'
     public void editarArquivo(File diretorioAtual, String nomeDoArquivo, Scanner leitorDoTerminal) {
-        File arquivo = new File(diretorioAtual, nomeDoArquivo);
+        File arquivo = validarCaminho(diretorioAtual, nomeDoArquivo, raizDoSistema, "nano");
+        if(arquivo == null){
+            return;
+        }
 
         if (arquivo.isDirectory()) {
             System.out.println("nano: " + nomeDoArquivo + ": É um diretório");
@@ -133,8 +163,15 @@ public class Operador {
     }
 
     public void copiarArquivo(File diretorioAtual, String nomeOrigem, String nomeDestino) {
-        File arquivoOrigem = new File(diretorioAtual, nomeOrigem);
-        File arquivoDestino = new File(diretorioAtual, nomeDestino);
+        File arquivoOrigem = validarCaminho(diretorioAtual, nomeOrigem, raizDoSistema, "copy");
+        if(arquivoOrigem == null){
+            return;
+        }
+
+        File arquivoDestino = validarCaminho(diretorioAtual, nomeDestino, raizDoSistema, "copy");
+        if(arquivoDestino == null){
+            return;
+        }
 
         // Verifica o estado no sistema de arquivos. Se não existir ou for diretório, aborta a operação.
         if (!arquivoOrigem.exists() || arquivoOrigem.isDirectory()) {
