@@ -1,9 +1,8 @@
 package sistema;
 
 import java.io.File;
-import java.io.FileWriter; // Usado para escrever texto dentro de um arquivo
-import java.io.PrintWriter; // Facilita a escrita, permitindo usar o .println() igual no System.out
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -139,20 +138,18 @@ public class Operador {
             } catch (Exception ignored) {} // Ignora o erro silenciosamente se não der pra ler
         }
 
-        // O parâmetro 'true' no FileWriter significa "Modo Append" (Adicionar ao final). 
-        // Sem esse 'true', toda vez que abrisse o nano, ele apagaria tudo que já estava escrito antes.
-        try (FileWriter fw = new FileWriter(arquivo, true);
-             PrintWriter escritor = new PrintWriter(fw)) {
+        // false = sobrescreve o arquivo inteiro c o que for escrito
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(arquivo, false));
+             PrintStream escritor = new PrintStream(bos, true)){ // vai ativar o autoFlush p o buffer ir esvaziando automaticamente sem precisar do flush()
             
-            // Loop infinito de digitação até o usuário digitar a palavra de saída
-            while (true) {
-                String linha = leitorDoTerminal.nextLine(); // Pega o Scanner que veio lá do Terminal.java
-                
-                if (linha.trim().equals(":wq")) {
-                    break;
-                }
-                escritor.println(linha); // Escreve a linha fisicamente no HD
+           while (true){
+            String linha = leitorDoTerminal.nextLine();
+            if(linha.trim().equals(":wq")){
+                break;
             }
+            escritor.println(linha);
+           }
+
         } catch (IOException e) {
             System.out.println("nano: Erro fatal ao tentar gravar no arquivo");
         }
