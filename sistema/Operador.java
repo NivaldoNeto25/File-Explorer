@@ -20,8 +20,8 @@ public class Operador {
                 System.out.println(comando + ": acesso negado.");
                 return null;
             }
-        } catch(IOException e){
-            System.err.println(comando + ": erro ao resolver caminho.");
+        } catch(Exception e){
+            System.out.println(comando + ": erro ao resolver caminho.");
             return null;
         }
         return alvo;
@@ -102,11 +102,15 @@ public class Operador {
             System.out.println("cat: " + nomeDoArquivo + ": É um diretório"); // Não se pode dar 'cat' em uma pasta
             return;
         }
-        try (Scanner leitorDeArquivo = new Scanner(arquivo)) {
-            while (leitorDeArquivo.hasNextLine()) {
-                System.out.println(leitorDeArquivo.nextLine());
+        try (BufferedInputStream leitor = new BufferedInputStream(new FileInputStream(arquivo))){
+            byte[] buffer= new byte[1024];
+            int bytesLidos;
+            
+            while((bytesLidos =leitor.read(buffer)) != -1){
+                System.out.print(new String(buffer, 0, bytesLidos));
             }
-        } catch (Exception e) {
+            System.out.println();
+            } catch (Exception e) {
             System.out.println("cat: erro ao tentar ler o arquivo");
         }
     }
